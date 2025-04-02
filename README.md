@@ -49,22 +49,30 @@ Ensure you have the following installed:
 
 ### 2️⃣ Installation
 ```bash
-git clone https://github.com/your-repo/api-gateway.git
+git clone 
 cd api-gateway
 npm install
+npm start
+
+cd ingestion
+npm install
+npm start
 ```
 
 ### 3️⃣ Environment Variables
 Create a `.env` file in the project root and add:
 ```env
-PORT=3000
-DATABASE_URL=postgresql://user:password@localhost:5432/db_name
-JWT_SECRET=your_secret_key
+JWT_SECRET=jktech
+API_GATEWAY_PORT=3000
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=root
+DATABASE_NAME=Jktech_Asessment
+UPLOAD_PATH=./uploads
+UPLOAD_MAX_FILE_SIZE=10485760 # 10MB
 REDIS_HOST=localhost
 REDIS_PORT=6379
-AWS_ACCESS_KEY_ID=your_aws_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret
-AWS_S3_BUCKET=your_bucket_name
 ```
 
 ### 4️⃣ Run the Application
@@ -89,12 +97,6 @@ http://localhost:3000/api-docs#
 ```bash
 npm run test
 ```
-### 2️⃣ Run E2E Tests
-```bash
-npm run test:e2e
-```
-
----
 
 ## 🚀 Deployment
 ### Docker Setup (Optional)
@@ -111,10 +113,7 @@ EXPOSE 3000
 Build and run the container:
 ```bash
 docker build -t api-gateway .
-docker run -p 3001:3000 api-gateway
-
-docker build -t ingestion .
-docker run -p 3002:3000 ingestion
+docker run -p 3000:3000 api-gateway
 ```
 
 ---
@@ -128,5 +127,6 @@ docker run -p 3002:3000 ingestion
 ✅ **API Gateway Pattern Implementation**  
 ✅ **Swagger API Documentation**  
 ✅ **Redis Caching for Optimized Performance**  
+
 
 
