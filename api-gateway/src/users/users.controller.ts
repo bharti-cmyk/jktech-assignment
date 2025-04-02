@@ -20,24 +20,4 @@ import { RolesGuard } from './roles.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'editor')
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'editor', 'viewer')
-  findOne(@Param('id') id: number) {
-    return this.usersService.findOne(id);
-  }
-
-  @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('admin')
-  remove(@Param('id') id: number) {
-    return this.usersService.remove(id);
-  }
 }

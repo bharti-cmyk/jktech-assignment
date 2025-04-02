@@ -15,12 +15,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private connect() {
     const host = this.configService.get<string>('REDIS_HOST');
     const port = this.configService.get<number>('REDIS_PORT');
-    //const password = this.configService.get<string>("REDIS_PASSWORD");
+   
 
     this.client = new Redis({
       host,
       port,
-      //password,
     });
 
     this.client.on('connect', () => {

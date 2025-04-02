@@ -17,17 +17,17 @@ export declare class DocumentController {
             id: number;
         };
     }>;
-    getDocument(id: number, req: any): Promise<StreamableFile>;
-    updateDocument(id: number, file: Express.Multer.File, req: any): Promise<{
+    getDocument(id: number, req: AuthenticatedRequest): Promise<StreamableFile>;
+    updateDocument(id: number, file: Express.Multer.File, req: AuthenticatedRequest): Promise<{
         message: string;
     }>;
-    listDocuments(req: any): Promise<{
+    listDocuments(req: AuthenticatedRequest): Promise<{
         id: number;
         name: string;
         size: string;
         uploadedAt: Date;
     }[]>;
-    deleteDocument(id: number, req: any): Promise<{
+    deleteDocument(id: number, req: AuthenticatedRequest): Promise<{
         message: string;
     }>;
 }

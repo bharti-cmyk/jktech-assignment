@@ -24,6 +24,7 @@ export class AbilityFactory {
       can(Action.WRITE, 'Document');
       can(Action.UPDATE, 'Document');
       can(Action.DELETE, 'Document');
+      can(Action.MANAGE, 'Document');
       can(Action.READ, 'User');
       can(Action.WRITE, 'User');
       can(Action.UPDATE, 'User');

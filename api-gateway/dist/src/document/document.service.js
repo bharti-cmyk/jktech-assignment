@@ -74,7 +74,7 @@ let DocumentService = class DocumentService {
     }
     async retrieveDocument(id, user) {
         const document = await this.getDocumentById(id, user);
-        const readStream = (0, fs_1.createReadStream)((0, path_1.join)(this.configService.get('upload.path'), document.name));
+        const readStream = (0, fs_1.createReadStream)((0, path_1.join)((0, path_1.join)(__dirname, this.configService.get('upload.path')), document.name));
         return readStream;
     }
     async updateDocument(id, document, user) {
@@ -89,7 +89,7 @@ let DocumentService = class DocumentService {
         oldDocument.mimeType = document.mimetype;
         try {
             await this.documentRepository.save(oldDocument);
-            await (0, promises_1.rm)((0, path_1.join)(this.configService.get('upload.path'), documentToDelete));
+            await (0, promises_1.rm)((0, path_1.join)((0, path_1.join)(__dirname, this.configService.get('upload.path')), documentToDelete));
         }
         catch (error) {
             await (0, promises_1.rm)(document.path);
@@ -102,7 +102,7 @@ let DocumentService = class DocumentService {
         if (!ability.can(role_permission_entity_1.Action.DELETE, 'Document')) {
             throw new common_1.ForbiddenException('You do not have permission to delete documents');
         }
-        await (0, promises_1.rm)((0, path_1.join)(this.configService.get('upload.path'), document.name));
+        await (0, promises_1.rm)((0, path_1.join)(((0, path_1.join)(__dirname, this.configService.get('upload.path'))), document.name));
         await this.documentRepository.remove(document);
     }
     async getSizeOfDocument(path) {
@@ -113,11 +113,11 @@ let DocumentService = class DocumentService {
     async listDocuments(user) {
         const ability = this.abilityFactory.defineAbility(user);
         if (!ability.can(role_permission_entity_1.Action.READ, 'Document')) {
-            throw new common_1.ForbiddenException('You do not have permission to list documents');
+            throw new common_1.ForbiddenException('You do not have permission to view this document');
         }
         const documents = await this.documentRepository.find();
         return Promise.all(documents.map(async (document) => {
-            const humanSize = await this.getSizeOfDocument((0, path_1.join)(this.configService.get('upload.path'), document.name));
+            const humanSize = await this.getSizeOfDocument((0, path_1.join)((0, path_1.join)(__dirname, this.configService.get('upload.path')), document.name));
             return {
                 id: document.id,
                 name: document.originalName,

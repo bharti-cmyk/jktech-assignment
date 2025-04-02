@@ -10,7 +10,7 @@ import { IngestionModule } from './ingestion/ingestion.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Ensures ConfigModule is available everywhere
+      isGlobal: true,
       load: [uploadConfig],
     }),
     AuthModule,

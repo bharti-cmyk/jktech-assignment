@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,7 +7,7 @@ import { IngestionEntity } from './entities/ingestion.entity';
 import { IngestionStatusEnum } from './types/StatusEnum';
 
 @Injectable()
-export class AppService {
+export class IngestionService {
   constructor(
     @InjectRepository(IngestionEntity)
     private ingestionRepository: Repository<IngestionEntity>,
@@ -20,7 +20,7 @@ export class AppService {
    * @returns newly created ingestion
    */
   async addIngestion(data: AddIngestionDTO) {
-    console.log('Received data for ingestion:', data); // Log the data
+  Logger.log('Received data for ingestion:', data); // Log the data
 
   const newIngestion = new IngestionEntity();
   newIngestion.documentId = data.documentId;
@@ -35,31 +35,31 @@ export class AppService {
 
   /**
    * Sleep for a given time
-   * @param ms number in miliseconds to sleep for
+   * @param sleepTime number in miliseconds to sleep for
    * @returns void
    */
-  async sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  async sleep(sleepTime: number) {
+    return new Promise((resolve) => setTimeout(resolve, sleepTime));
   }
 
   /**
    * Change the status of the ingestion to success
-   * @param payload of the newly created ingestion
+   * @param newIngestion of the newly created ingestion
    */
   @OnEvent('add.ingestion', { async: true })
-  async addIngestionHandler(payload: IngestionEntity) {
+  async addIngestionHandler(newIngestion: IngestionEntity) {
     const random = Math.floor(Math.random() * 11) + 20;
 
     await this.sleep(random * 1000);
 
-    console.log(`Ingestion ${payload.id} processed after ${random} seconds`);
+    console.log(`Ingestion ${newIngestion.id} processed after ${random} seconds`);
 
-    payload.status =
+    newIngestion.status =
       random % 2 === 0
         ? IngestionStatusEnum.SUCCESS
         : IngestionStatusEnum.FAILED;
 
-    this.ingestionRepository.save(payload);
+    this.ingestionRepository.save(newIngestion);
   }
 
   getIngestion(ingestionId: number) {

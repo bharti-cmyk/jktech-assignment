@@ -15,7 +15,6 @@ const roles_entity_1 = require("../users/roles/roles.entity");
 const permission_entity_1 = require("../users/roles/permission.entity");
 const role_permission_entity_1 = require("../users/roles/role-permission.entity");
 const document_entity_1 = require("../document/document.entity");
-const InitTables1741851165843_1 = require("./migrations/InitTables1741851165843");
 const typeorm_2 = require("typeorm");
 let DatabaseModule = class DatabaseModule {
 };
@@ -43,7 +42,6 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                             document_entity_1.DocumentEntity,
                         ],
                         synchronize: false,
-                        migrations: [InitTables1741851165843_1.InitTables1741851165843],
                         migrationsRun: true,
                     });
                     await dataSource.initialize();

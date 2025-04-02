@@ -1,15 +1,20 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { AppService } from './ingestion.service';
+import { IngestionService } from './ingestion.service';
 import { AddIngestionDTO } from './dto/add-ingestion.dto';
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class IngestionController {
+  constructor(private readonly ingestionService: IngestionService) {}
+
+  @Get()
+  getHello(): string {
+    return 'Hello World!';
+  }
 
   @MessagePattern('add.ingestion')
   async addIngestion(data: AddIngestionDTO) {
-    const ingestion = await this.appService.addIngestion(data);
+    const ingestion = await this.ingestionService.addIngestion(data);
 
     return {
       message: 'Successfully added',
@@ -19,7 +24,7 @@ export class AppController {
 
   @MessagePattern('get.ingestion')
   async getIngestion(id: number) {
-    const ingestion = await this.appService.getIngestion(id);
+    const ingestion = await this.ingestionService.getIngestion(id);
 
     return {
       message: 'Successfully fetched',

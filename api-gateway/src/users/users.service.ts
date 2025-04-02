@@ -13,18 +13,6 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  // async create(createUserDto: CreateUserDto): Promise<User> {
-  //   const salt = await bcrypt.genSalt();
-  //   const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-  //   const { role, ...userData } = createUserDto;
-  //   const user = this.usersRepository.create({
-  //     ...userData,
-  //     password: hashedPassword,
-  //     role: role ? { name: role } : undefined, // Adjust mapping based on your Role entity structure
-  //   });
-  //   return this.usersRepository.save(user);
-  // }
-
   async findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }

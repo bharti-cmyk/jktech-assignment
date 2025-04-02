@@ -18,6 +18,7 @@ let AbilityFactory = class AbilityFactory {
             can(role_permission_entity_1.Action.WRITE, 'Document');
             can(role_permission_entity_1.Action.UPDATE, 'Document');
             can(role_permission_entity_1.Action.DELETE, 'Document');
+            can(role_permission_entity_1.Action.MANAGE, 'Document');
             can(role_permission_entity_1.Action.READ, 'User');
             can(role_permission_entity_1.Action.WRITE, 'User');
             can(role_permission_entity_1.Action.UPDATE, 'User');

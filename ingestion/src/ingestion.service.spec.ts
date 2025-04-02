@@ -1,20 +1,20 @@
 import { Test } from '@nestjs/testing';
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
-import { AppService } from './ingestion.service';
+import { IngestionService } from './ingestion.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { IngestionEntity } from './entities/ingestion.entity';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('AppService', () => {
-  let service: AppService;
+  let service: IngestionService;
   let repo: DeepMocked<Repository<IngestionEntity>>;
   let eventEmitter: DeepMocked<EventEmitter2>;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        AppService,
+        IngestionService,
         { provide: EventEmitter2, useValue: createMock() },
         {
           provide: getRepositoryToken(IngestionEntity),
@@ -25,7 +25,7 @@ describe('AppService', () => {
 
     eventEmitter = module.get(EventEmitter2);
     repo = module.get(getRepositoryToken(IngestionEntity));
-    service = module.get(AppService);
+    service = module.get(IngestionService);
   });
 
   it('should be defined', () => {

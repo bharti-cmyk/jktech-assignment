@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IngestionController = void 0;
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const check_permission_decorator_1 = require("../global/decorators/check-permission.decorator");
 const jwt_guard_1 = require("../auth/jwt.guard");
 const roles_guard_1 = require("../users/roles.guard");
@@ -41,6 +42,16 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, check_permission_decorator_1.CheckPermissions)((ability) => ability.can(role_permission_entity_1.Action.WRITE, 'Ingestion')),
+    (0, swagger_1.ApiOperation)({ summary: 'Create an ingestion record' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Ingestion record created successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden' }),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            example: {
+                documentId: 123
+            },
+        },
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -48,6 +59,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], IngestionController.prototype, "create", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Get an ingestion record by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Ingestion record retrieved successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Ingestion record not found' }),
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, check_permission_decorator_1.CheckPermissions)((ability) => ability.can(role_permission_entity_1.Action.READ, 'Ingestion')),
@@ -57,6 +71,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], IngestionController.prototype, "findOne", null);
 exports.IngestionController = IngestionController = __decorate([
+    (0, swagger_1.ApiTags)('Ingestion'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('ingestion'),
     __metadata("design:paramtypes", [ingestion_service_1.IngestionService])
 ], IngestionController);

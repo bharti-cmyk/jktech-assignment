@@ -76,7 +76,7 @@ export class DocumentService {
   async retrieveDocument(id: number, user: UserEntity) {
     const document = await this.getDocumentById(id, user);
     const readStream = createReadStream(
-      join(this.configService.get('upload.path') as string, document.name),
+      join(join(__dirname, this.configService.get('upload.path') as string), document.name),
     );
     return readStream;
   }
@@ -102,7 +102,7 @@ export class DocumentService {
     try {
       await this.documentRepository.save(oldDocument);
       await rm(
-        join(this.configService.get('upload.path') as string, documentToDelete),
+        join(join(__dirname, this.configService.get('upload.path') as string), documentToDelete),
       );
     } catch (error) {
       await rm(document.path);
@@ -120,7 +120,7 @@ export class DocumentService {
     }
 
     await rm(
-      join(this.configService.get('upload.path') as string, document.name),
+      join((join(__dirname, this.configService.get('upload.path') as string)), document.name),
     );
     await this.documentRepository.remove(document);
   }
@@ -133,17 +133,17 @@ export class DocumentService {
 
   async listDocuments(user: UserEntity) {
     const ability = this.abilityFactory.defineAbility(user);
+
     if (!ability.can(Action.READ, 'Document')) {
       throw new ForbiddenException(
-        'You do not have permission to list documents',
+        'You do not have permission to view this document',
       );
     }
-
     const documents = await this.documentRepository.find();
     return Promise.all(
       documents.map(async (document) => {
         const humanSize = await this.getSizeOfDocument(
-          join(this.configService.get('upload.path') as string, document.name),
+          join(join(__dirname, this.configService.get('upload.path') as string), document.name),
         );
 
         return {

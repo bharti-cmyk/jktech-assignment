@@ -14,7 +14,14 @@ import {
   Request,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Express } from 'express';
 import { CheckPermissions } from '../global/decorators/check-permission.decorator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
@@ -32,7 +39,9 @@ interface AuthenticatedRequest extends Request {
   user: AuthTokenPayload;
 }
 
-@ApiTags('document')
+@ApiTags('Documents') // Group all endpoints under "Documents"
+@ApiBearerAuth() // Apply JWT authentication to all routes
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('document')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
@@ -40,17 +49,36 @@ export class DocumentController {
   /**
    * Upload a new document
    */
+  @ApiOperation({ summary: 'Upload a document' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Document file upload',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Document uploaded successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
-  @CheckPermissions((ability) => ability.can(Action.WRITE, 'Document'))
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,
     @Request() req: AuthenticatedRequest,
   ) {
     if (!req.user) {
       throw new Error('User not authenticated');
+    }
+
+    if (!file) {
+      throw new Error('Please upload valid file');
     }
     const { userId } = req.user;
     const user = await this.documentService.getUserFromRequest(userId);
@@ -72,11 +100,21 @@ export class DocumentController {
   /**
    * Retrieve a document by ID
    */
+  @ApiOperation({ summary: 'Retrieve a document by ID' })
+  @ApiResponse({ status: 200, description: 'Returns the document as a stream' })
+  @ApiResponse({ status: 404, description: 'Document not found' })
   @Get(':id')
-  @ApiBearerAuth()
-  @CheckPermissions((ability) => ability.can(Action.READ, 'Document'))
-  async getDocument(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    const stream = await this.documentService.retrieveDocument(id, req.user);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async getDocument(@Param('id', ParseIntPipe) id: number, @Request() req: AuthenticatedRequest) {
+    if (!req.user) {
+      throw new Error('User not authenticated');
+    }
+    const { userId } = req.user;
+
+    const user = await this.documentService.getUserFromRequest(userId);
+
+    const stream = await this.documentService.retrieveDocument(id, user);
 
     return new StreamableFile(stream);
   }
@@ -84,11 +122,10 @@ export class DocumentController {
   /**
    * Update an existing document
    */
-  @Put(':id')
-  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update an existing document' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'Upload a new document to update the existing one',
+    description: 'Upload a new document to replace the existing one',
     schema: {
       type: 'object',
       properties: {
@@ -99,15 +136,22 @@ export class DocumentController {
       },
     },
   })
+  @ApiResponse({ status: 200, description: 'Document updated successfully' })
+  @ApiResponse({ status: 404, description: 'Document not found' })
+  @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @CheckPermissions((ability) => ability.can(Action.UPDATE, 'Document'))
   async updateDocument(
     @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: Express.Multer.File,
-    @Req() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
-    await this.documentService.updateDocument(id, file, req.user);
+    if (!req.user) {
+      throw new Error('User not authenticated');
+    }
+    const { userId } = req.user;
+    const user = await this.documentService.getUserFromRequest(userId);
+    await this.documentService.updateDocument(id, file, user);
 
     return {
       message: 'Document updated successfully',
@@ -117,22 +161,36 @@ export class DocumentController {
   /**
    * List all documents
    */
+  @ApiOperation({ summary: 'Get all documents' })
+  @ApiResponse({ status: 200, description: 'Returns a list of documents' })
   @Get()
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @CheckPermissions((ability) => ability.can(Action.READ, 'Document'))
-  async listDocuments(@Req() req: any) {
-    return this.documentService.listDocuments(req.user);
+  async listDocuments(@Request() req: AuthenticatedRequest) {
+    if (!req.user) {
+      throw new Error('User not authenticated');
+    }
+    const { userId } = req.user;
+
+    const user = await this.documentService.getUserFromRequest(userId);
+    return this.documentService.listDocuments(user);
   }
 
   /**
    * Delete a document by ID
    */
+  @ApiOperation({ summary: 'Delete a document by ID' })
+  @ApiResponse({ status: 200, description: 'Document deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Document not found' })
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @CheckPermissions((ability) => ability.can(Action.DELETE, 'Document'))
-  async deleteDocument(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    await this.documentService.deleteDocument(id, req.user);
+  async deleteDocument(@Param('id', ParseIntPipe) id: number, @Request() req: AuthenticatedRequest) {
+    if (!req.user) {
+      throw new Error('User not authenticated');
+    }
+    const { userId } = req.user;
+
+    const user = await this.documentService.getUserFromRequest(userId);
+    await this.documentService.deleteDocument(id, user);
 
     return {
       message: 'Document deleted successfully',
