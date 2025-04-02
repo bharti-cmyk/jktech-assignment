@@ -50,7 +50,8 @@ export class AuthController {
     },
   })
   @Post('register')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
   @CheckPermissions((ability) => ability.can(Action.WRITE, 'User'))
   create(@Body() createUserDto: any) {
     return this.authService.create(createUserDto);
