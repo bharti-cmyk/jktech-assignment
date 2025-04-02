@@ -111,7 +111,10 @@ EXPOSE 3000
 Build and run the container:
 ```bash
 docker build -t api-gateway .
-docker run -p 3000:3000 api-gateway
+docker run -p 3001:3000 api-gateway
+
+docker build -t ingestion .
+docker run -p 3002:3000 ingestion
 ```
 
 ---
@@ -126,18 +129,4 @@ docker run -p 3000:3000 api-gateway
 ✅ **Swagger API Documentation**  
 ✅ **Redis Caching for Optimized Performance**  
 
----
-
-## 📌 License
-This project is licensed under the MIT License.
-
----
-
-## 🙌 Contributing
-Feel free to submit a pull request or report issues.
-
----
-
-## 📞 Contact
-For any inquiries, reach out at `your-email@example.com`.
 
