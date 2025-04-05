@@ -1,3 +1,4 @@
+version: '3.8'  # Specify the version of the Compose file format
 
 services:
   postgres:
@@ -7,39 +8,33 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: legacy_service
+      POSTGRES_DB: jktech_service
     ports:
-      - "5432:5432"  # Map PostgreSQL to 5431 on host
+      - "5432:5432"
     networks:
       - my_network
 
   api-gateway:
-    container_name: api-gateway
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
+    container_name: api-gateway
     ports:
-      - '4001:3000'
+      - "4001:3000"
     env_file:
       - ./api-gateway/.env
-    depends_on:
-      - postgres
-      - redis
-      - ingestion
     networks:
       - my_network
 
   ingestion:
-    container_name: ingestion
     build:
       context: ./ingestion
       dockerfile: Dockerfile
+    container_name: ingestion
     ports:
-      - '4002:3000'
+      - "4002:3000"
     env_file:
       - ./ingestion/.env
-    depends_on:
-      - postgres
     networks:
       - my_network
 
