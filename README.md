@@ -57,7 +57,7 @@ REDIS_PORT=6379
 Use docker-compose.prod.yml to run all services in production:
 
 docker compose -f docker-compose.prod.yml up --build -d
-Ports
+
 Service	     Port on Host	   Port in Container
 API Gateway	  4001	          3000
 Ingestion	    4002	          3000
