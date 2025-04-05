@@ -33,9 +33,6 @@ let AbilityFactory = class AbilityFactory {
         else if (user.roleId === 3) {
             can(role_permission_entity_1.Action.READ, 'Document');
         }
-        else {
-            cannot(role_permission_entity_1.Action.MANAGE, 'all');
-        }
         return build({
             detectSubjectType: (item) => item.constructor,
         });

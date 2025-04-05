@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserEntity } from '../users/users.entity';
 import { Repository } from 'typeorm';
@@ -31,12 +31,21 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
-    const payload = { sub: user.id, role: user.role };
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const payload = { sub: user.id, username: user.email,role: user.roleId };
     const access_token = this.jwtService.sign(payload);
     return { message: 'Successfully loggedin', access_token };
   }
 
   async create(createUserDto: CreateUserDto): Promise<RegisterDto> {
+    const existingUser = await this.usersService.findByEmail(createUserDto.email);
+
+    if (existingUser) {
+      throw new ConflictException('User already exists'); 
+    }
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
@@ -45,7 +54,7 @@ export class AuthService {
       where: { name: createUserDto.role },
     });
     if (!role) {
-      throw new Error('Invalid role ID'); // Handle error properly (e.g., using AppError)
+      throw new NotFoundException('Invalid role ID'); // Handle error properly (e.g., using AppError)
     }
 
     const user = this.usersRepository.create({
@@ -68,8 +77,14 @@ export class AuthService {
     };
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    return this.usersRepository.find();
+  async findAllUser(): Promise<UserEntity[]> {
+    const users =  this.usersRepository.find();
+
+    if (!users) {
+      return [];
+    }
+
+    return users;
   }
 
   async findOne(id: number): Promise<UserEntity | null> {
@@ -80,7 +95,13 @@ export class AuthService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+  async remove(id: number): Promise<any> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const userDeleted = await this.usersRepository.delete(id);
+
+    return userDeleted
   }
 }

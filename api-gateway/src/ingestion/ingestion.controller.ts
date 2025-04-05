@@ -1,4 +1,4 @@
-import { 
+import {
   Body,
   Controller,
   Get,
@@ -8,13 +8,19 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 import { CheckPermissions } from '../global/decorators/check-permission.decorator';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-import { RolesGuard } from '../users/roles.guard';
 import { Action } from '../users/roles/role-permission.entity';
 import { CreateIngestionDto } from './dto/create-ingestion.dto';
 import { IngestionService } from './ingestion.service';
+import { CaslModule } from '../casl/casl.module';
 
 interface AuthTokenPayload {
   userId: number;
@@ -32,15 +38,18 @@ export class IngestionController {
   constructor(private readonly ingestionService: IngestionService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @CheckPermissions((ability) => ability.can(Action.WRITE, 'Ingestion'))
   @ApiOperation({ summary: 'Create an ingestion record' })
-  @ApiResponse({ status: 201, description: 'Ingestion record created successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Ingestion record created successfully',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiBody({
     schema: {
       example: {
-        documentId: 123
+        documentId: 123,
       },
     },
   })
@@ -56,10 +65,13 @@ export class IngestionController {
   }
 
   @ApiOperation({ summary: 'Get an ingestion record by ID' })
-  @ApiResponse({ status: 200, description: 'Ingestion record retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Ingestion record retrieved successfully',
+  })
   @ApiResponse({ status: 404, description: 'Ingestion record not found' })
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @CheckPermissions((ability) => ability.can(Action.READ, 'Ingestion'))
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.ingestionService.findIngestionById(id);

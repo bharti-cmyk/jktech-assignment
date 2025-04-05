@@ -15,20 +15,22 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private connect() {
     const host = this.configService.get<string>('REDIS_HOST');
     const port = this.configService.get<number>('REDIS_PORT');
-   
-
-    this.client = new Redis({
-      host,
-      port,
-    });
-
-    this.client.on('connect', () => {
-      console.log(`Connected to Redis Successfully on ${host}:${port}`);
-    });
-
-    this.client.on('error', (error) => {
-      console.error('Redis connection error:', error);
-    });
+  
+    try {
+      this.client = new Redis({ host, port });
+  
+      this.client.on('connect', () => {
+        console.log(`Connected to Redis Successfully on ${host}:${port}`);
+      });
+  
+      this.client.on('error', (error) => {
+        console.error('Redis connection error:', error);
+        throw new Error('Failed to connect to Redis');
+      });
+    } catch (error) {
+      console.error('Redis initialization error:', error);
+      throw new Error('Redis initialization failed');
+    }
   }
 
   getClient(): Redis {

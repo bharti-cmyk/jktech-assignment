@@ -14,15 +14,15 @@ import { RedisModule } from './db/redis.db.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [getConfig], 
+      load: [getConfig],
     }),
     EventEmitterModule.forRoot({
       delimiter: '.',
       global: true,
       wildcard: true,
     }),
-    DbModule,
     RedisModule,
+    DbModule,
     TypeOrmModule.forFeature([IngestionEntity]),
   ],
   controllers: [IngestionController],

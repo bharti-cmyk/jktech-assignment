@@ -21,7 +21,7 @@ const permission_entity_1 = require("../../users/roles/permission.entity");
 const role_permission_entity_1 = require("../../users/roles/role-permission.entity");
 const role_permission_entity_2 = require("../../users/roles/role-permission.entity");
 const users_entity_1 = require("../../users/users.entity");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 let SeedService = class SeedService {
     roleRepo;
     permissionRepo;

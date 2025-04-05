@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const check_permission_decorator_1 = require("../global/decorators/check-permission.decorator");
 const jwt_guard_1 = require("../auth/jwt.guard");
-const roles_guard_1 = require("../users/roles.guard");
 const role_permission_entity_1 = require("../users/roles/role-permission.entity");
 const create_ingestion_dto_1 = require("./dto/create-ingestion.dto");
 const ingestion_service_1 = require("./ingestion.service");
@@ -40,15 +39,18 @@ let IngestionController = class IngestionController {
 exports.IngestionController = IngestionController;
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     (0, check_permission_decorator_1.CheckPermissions)((ability) => ability.can(role_permission_entity_1.Action.WRITE, 'Ingestion')),
     (0, swagger_1.ApiOperation)({ summary: 'Create an ingestion record' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Ingestion record created successfully' }),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'Ingestion record created successfully',
+    }),
     (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden' }),
     (0, swagger_1.ApiBody)({
         schema: {
             example: {
-                documentId: 123
+                documentId: 123,
             },
         },
     }),
@@ -60,10 +62,13 @@ __decorate([
 ], IngestionController.prototype, "create", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get an ingestion record by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Ingestion record retrieved successfully' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Ingestion record retrieved successfully',
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Ingestion record not found' }),
     (0, common_1.Get)(':id'),
-    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     (0, check_permission_decorator_1.CheckPermissions)((ability) => ability.can(role_permission_entity_1.Action.READ, 'Ingestion')),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

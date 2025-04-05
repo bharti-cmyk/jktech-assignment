@@ -8,7 +8,7 @@ import {
 import { Action } from '../users/roles/role-permission.entity';
 import { UserEntity } from '../users/users.entity';
 
-export type Subjects = 'Document' | 'User' | 'all';
+export type Subjects = 'Document' | 'User';
 export type AppAbility = Ability<[Action, Subjects]>;
 
 @Injectable()
@@ -38,8 +38,6 @@ export class AbilityFactory {
     } else if (user.roleId === 3) {
       // Viewer
       can(Action.READ, 'Document');
-    } else {
-      cannot(Action.MANAGE, 'all');
     }
 
     return build({

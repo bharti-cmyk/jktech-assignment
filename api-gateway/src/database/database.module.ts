@@ -6,8 +6,7 @@ import { RoleEntity } from '../users/roles/roles.entity';
 import { PermissionEntity } from '../users/roles/permission.entity';
 import { RolePermissionEntity } from '../users/roles/role-permission.entity';
 import { DocumentEntity } from '../document/document.entity';
-// import { InitTables1741851165843 } from './migrations/InitTables1741851165843';
-// import {DocumentTable1741863113053 } from './migrations/1741863113053-DocumentTable'
+import { InitTables1741851165843 } from './migrations/InitTables1741851165843';
 import { DataSource } from 'typeorm';
 
 @Module({
@@ -32,7 +31,7 @@ import { DataSource } from 'typeorm';
             DocumentEntity,
           ],
           synchronize: false,
-          // migrations: [InitTables1741851165843, DocumentTable1741863113053], // we can uncomment this to create the database tables
+          migrations: [InitTables1741851165843], // we can uncomment this to create the database tables
           migrationsRun: true,
         });
 

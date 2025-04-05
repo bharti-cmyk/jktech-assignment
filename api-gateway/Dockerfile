@@ -1,13 +1,19 @@
-FROM node:22.14.0-alpine
+FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
+# Install required build dependencies
+RUN apk add --no-cache python3 py3-pip make g++ 
+
 COPY package*.json ./
+
+# Install dependencies, forcing bcrypt to be rebuilt
+RUN npm ci --omit=dev && npm rebuild bcrypt --build-from-source
 
 RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4001
 
-CMD [ "sh", "run.sh" ]
+CMD ["npm", "run", "start"]

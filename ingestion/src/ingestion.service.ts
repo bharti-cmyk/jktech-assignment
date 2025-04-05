@@ -20,17 +20,17 @@ export class IngestionService {
    * @returns newly created ingestion
    */
   async addIngestion(data: AddIngestionDTO) {
-  Logger.log('Received data for ingestion:', data); // Log the data
+    Logger.log('Received data for ingestion:', data); // Log the data
 
-  const newIngestion = new IngestionEntity();
-  newIngestion.documentId = data.documentId;
-  newIngestion.userId = data.userId;
+    const newIngestion = new IngestionEntity();
+    newIngestion.documentId = data.documentId;
+    newIngestion.userId = data.userId;
 
-  await this.ingestionRepository.save(newIngestion);
+    await this.ingestionRepository.save(newIngestion);
 
-  this.eventEmitter.emit('add.ingestion', newIngestion);
+    this.eventEmitter.emit('add.ingestion', newIngestion);
 
-  return newIngestion;
+    return newIngestion;
   }
 
   /**
@@ -52,7 +52,9 @@ export class IngestionService {
 
     await this.sleep(random * 1000);
 
-    console.log(`Ingestion ${newIngestion.id} processed after ${random} seconds`);
+    console.log(
+      `Ingestion ${newIngestion.id} processed after ${random} seconds`,
+    );
 
     newIngestion.status =
       random % 2 === 0

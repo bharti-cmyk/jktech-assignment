@@ -1,2 +1,1 @@
-import { PermissionHandler } from '../../casl/casl.types';
-export declare const CheckPermissions: (...handlers: PermissionHandler[]) => import("@nestjs/common").CustomDecorator<string>;
+export declare const CheckPermissions: (callback: (ability: any) => boolean) => import("@nestjs/common").CustomDecorator<string>;

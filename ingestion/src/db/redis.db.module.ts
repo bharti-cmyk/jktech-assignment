@@ -15,7 +15,9 @@ import Redis from 'ioredis';
 
         // Log success on successful connection
         redis.on('connect', () => {
-          Logger.log(`Connected to Redis at ${configService.get<string>('REDIS_HOST')}:${configService.get<number>('REDIS_PORT')}`);
+          Logger.log(
+            `Connected to Redis at ${configService.get<string>('REDIS_HOST')}:${configService.get<number>('REDIS_PORT')}`,
+          );
         });
 
         // Handle errors

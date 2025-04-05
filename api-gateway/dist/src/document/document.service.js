@@ -102,7 +102,7 @@ let DocumentService = class DocumentService {
         if (!ability.can(role_permission_entity_1.Action.DELETE, 'Document')) {
             throw new common_1.ForbiddenException('You do not have permission to delete documents');
         }
-        await (0, promises_1.rm)((0, path_1.join)(((0, path_1.join)(__dirname, this.configService.get('upload.path'))), document.name));
+        await (0, promises_1.rm)((0, path_1.join)((0, path_1.join)(__dirname, this.configService.get('upload.path')), document.name));
         await this.documentRepository.remove(document);
     }
     async getSizeOfDocument(path) {

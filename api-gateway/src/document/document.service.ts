@@ -76,7 +76,10 @@ export class DocumentService {
   async retrieveDocument(id: number, user: UserEntity) {
     const document = await this.getDocumentById(id, user);
     const readStream = createReadStream(
-      join(join(__dirname, this.configService.get('upload.path') as string), document.name),
+      join(
+        join(__dirname, this.configService.get('upload.path') as string),
+        document.name,
+      ),
     );
     return readStream;
   }
@@ -102,7 +105,10 @@ export class DocumentService {
     try {
       await this.documentRepository.save(oldDocument);
       await rm(
-        join(join(__dirname, this.configService.get('upload.path') as string), documentToDelete),
+        join(
+          join(__dirname, this.configService.get('upload.path') as string),
+          documentToDelete,
+        ),
       );
     } catch (error) {
       await rm(document.path);
@@ -120,7 +126,10 @@ export class DocumentService {
     }
 
     await rm(
-      join((join(__dirname, this.configService.get('upload.path') as string)), document.name),
+      join(
+        join(__dirname, this.configService.get('upload.path') as string),
+        document.name,
+      ),
     );
     await this.documentRepository.remove(document);
   }
@@ -143,7 +152,10 @@ export class DocumentService {
     return Promise.all(
       documents.map(async (document) => {
         const humanSize = await this.getSizeOfDocument(
-          join(join(__dirname, this.configService.get('upload.path') as string), document.name),
+          join(
+            join(__dirname, this.configService.get('upload.path') as string),
+            document.name,
+          ),
         );
 
         return {

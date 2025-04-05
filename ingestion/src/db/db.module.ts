@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IngestionEntity } from '../entities/ingestion.entity';
 import { DataSource } from 'typeorm';
-import { IngestionTable1741877098124 } from './migrations/1741877098124-IngestionTable'
+import { IngestionTable1741877098124 } from './migrations/1741877098124-IngestionTable';
 @Module({
   imports: [
     ConfigModule,

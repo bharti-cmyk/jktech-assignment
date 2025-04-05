@@ -7,7 +7,7 @@ const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_entity_1 = require("../users/users.entity");
 const roles_entity_1 = require("../users/roles/roles.entity");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const common_1 = require("@nestjs/common");
 describe('AuthService', () => {
     let authService;

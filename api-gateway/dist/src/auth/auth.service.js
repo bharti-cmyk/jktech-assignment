@@ -16,7 +16,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const users_service_1 = require("../users/users.service");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const users_entity_1 = require("../users/users.entity");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
@@ -41,18 +41,25 @@ let AuthService = class AuthService {
     }
     async login(loginDto) {
         const user = await this.validateUser(loginDto.username, loginDto.password);
-        const payload = { sub: user.id, role: user.role };
+        if (!user) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        const payload = { sub: user.id, username: user.email, role: user.roleId };
         const access_token = this.jwtService.sign(payload);
         return { message: 'Successfully loggedin', access_token };
     }
     async create(createUserDto) {
+        const existingUser = await this.usersService.findByEmail(createUserDto.email);
+        if (existingUser) {
+            throw new common_1.ConflictException('User already exists');
+        }
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
         const role = await this.rolesRepository.findOne({
             where: { name: createUserDto.role },
         });
         if (!role) {
-            throw new Error('Invalid role ID');
+            throw new common_1.NotFoundException('Invalid role ID');
         }
         const user = this.usersRepository.create({
             firstName: createUserDto.firstName,
@@ -71,8 +78,12 @@ let AuthService = class AuthService {
             },
         };
     }
-    async findAll() {
-        return this.usersRepository.find();
+    async findAllUser() {
+        const users = this.usersRepository.find();
+        if (!users) {
+            return [];
+        }
+        return users;
     }
     async findOne(id) {
         return this.usersRepository.findOne({ where: { id } });
@@ -81,7 +92,12 @@ let AuthService = class AuthService {
         return this.usersRepository.findOne({ where: { email } });
     }
     async remove(id) {
-        await this.usersRepository.delete(id);
+        const user = await this.usersRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        const userDeleted = await this.usersRepository.delete(id);
+        return userDeleted;
     }
 };
 exports.AuthService = AuthService;

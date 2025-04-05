@@ -16,6 +16,7 @@ const upload_config_1 = require("./global/upload/upload.config");
 const seed_module_1 = require("./auth/seed/seed.module");
 const document_module_1 = require("./document/document.module");
 const ingestion_module_1 = require("./ingestion/ingestion.module");
+const casl_module_1 = require("./casl/casl.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,7 +33,9 @@ exports.AppModule = AppModule = __decorate([
             seed_module_1.SeedModule,
             document_module_1.DocumentModule,
             ingestion_module_1.IngestionModule,
+            casl_module_1.CaslModule
         ],
+        providers: [],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

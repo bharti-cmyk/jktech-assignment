@@ -9,6 +9,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module'; // Import UsersModule
 import { UserEntity } from '../users/users.entity'; // Import User entity
 import { RoleEntity } from '../users/roles/roles.entity';
+import { CaslModule } from '../casl/casl.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RoleEntity } from '../users/roles/roles.entity';
         signOptions: { expiresIn: '24h' },
       }),
     }),
+    CaslModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

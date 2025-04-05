@@ -18,8 +18,8 @@ export declare class AuthService {
         access_token: string;
     }>;
     create(createUserDto: CreateUserDto): Promise<RegisterDto>;
-    findAll(): Promise<UserEntity[]>;
+    findAllUser(): Promise<UserEntity[]>;
     findOne(id: number): Promise<UserEntity | null>;
     findByEmail(email: string): Promise<UserEntity | null>;
-    remove(id: number): Promise<void>;
+    remove(id: number): Promise<any>;
 }

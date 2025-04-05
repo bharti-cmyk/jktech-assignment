@@ -1,4 +1,7 @@
-export function parseIntSafe(num: string | undefined, fallback: number): number {
+export function parseIntSafe(
+  num: string | undefined,
+  fallback: number,
+): number {
   if (!num) return fallback;
   return !isNaN(parseInt(num, 10)) ? parseInt(num) : fallback;
 }

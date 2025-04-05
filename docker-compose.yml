@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: legacy_service
     ports:
-      - "5431:5432"  # Map PostgreSQL to 5431 on host
+      - "5432:5432"  # Map PostgreSQL to 5431 on host
     networks:
       - my_network
 

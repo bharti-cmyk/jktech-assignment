@@ -1,7 +1,7 @@
 import { InferSubjects, MongoAbility } from '@casl/ability';
 import { Action, Permissions } from '../users/roles/role-permission.entity';
 
-export type Subjects = InferSubjects<Permissions> | 'all';
+export type Subjects = InferSubjects<Permissions>;
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 

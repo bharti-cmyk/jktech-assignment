@@ -18,14 +18,14 @@ let RolesGuard = class RolesGuard {
         this.reflector = reflector;
     }
     canActivate(context) {
+        const request = context.switchToHttp().getRequest();
+        const user = request.user;
+        if (!user) {
+            throw new common_1.UnauthorizedException('User not authenticated');
+        }
         const requiredRoles = this.reflector.get('roles', context.getHandler());
-        console.log('Required Roles:', requiredRoles);
         if (!requiredRoles) {
             return true;
-        }
-        const request = context.switchToHttp().getRequest();
-        if (!request.user) {
-            return false;
         }
         return true;
     }

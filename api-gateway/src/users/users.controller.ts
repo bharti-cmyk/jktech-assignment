@@ -19,5 +19,4 @@ import { RolesGuard } from './roles.guard';
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
 }

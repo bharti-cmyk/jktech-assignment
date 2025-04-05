@@ -18,6 +18,7 @@ const jwt_strategy_1 = require("./jwt.strategy");
 const users_module_1 = require("../users/users.module");
 const users_entity_1 = require("../users/users.entity");
 const roles_entity_1 = require("../users/roles/roles.entity");
+const casl_module_1 = require("../casl/casl.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -37,6 +38,7 @@ exports.AuthModule = AuthModule = __decorate([
                     signOptions: { expiresIn: '24h' },
                 }),
             }),
+            casl_module_1.CaslModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

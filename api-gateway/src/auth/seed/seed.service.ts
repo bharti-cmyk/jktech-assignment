@@ -6,7 +6,7 @@ import { PermissionEntity } from '../../users/roles/permission.entity';
 import { RolePermissionEntity } from '../../users/roles/role-permission.entity';
 import { Action } from '../../users/roles/role-permission.entity';
 import { UserEntity } from '../../users/users.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class SeedService implements OnModuleInit {

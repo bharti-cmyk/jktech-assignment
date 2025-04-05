@@ -1,4 +1,4 @@
-FROM node:22.14.0-alpine
+FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 4000
+EXPOSE 4002
 
-CMD [ "sh", "run.sh" ]
+CMD [ "npm", "start" ]
