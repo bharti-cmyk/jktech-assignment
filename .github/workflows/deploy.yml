@@ -24,6 +24,16 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
+      # Create .env file for api-gateway
+      - name: Create .env file for api-gateway
+        run: |
+          echo "${{ secrets.API_GATEWAY_ENV }}" > ./api-gateway/.env
+
+      # Create .env file for ingestion
+      - name: Create .env file for ingestion
+        run: |
+          echo "${{ secrets.INGESTION_ENV }}" > ./ingestion/.env
+
 
       # Check Docker and Docker Compose versions
       - name: Check Docker version
