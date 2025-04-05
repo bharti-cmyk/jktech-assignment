@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main
 
 jobs:
   build-and-test:
@@ -34,6 +34,13 @@ jobs:
         run: |
           echo "${{ secrets.INGESTION_ENV }}" > ./ingestion/.env
 
+      # Verify .env files
+      - name: Verify .env files
+        run: |
+          ls -l ./api-gateway/.env
+          cat ./api-gateway/.env
+          ls -l ./ingestion/.env
+          cat ./ingestion/.env
 
       # Check Docker and Docker Compose versions
       - name: Check Docker version
@@ -45,16 +52,6 @@ jobs:
       # Build Docker images
       - name: Build Docker images
         run: docker-compose build
-
-      # Run tests for api-gateway (skip if not ready)
-      # Uncomment this when tests are ready
-      # - name: Run tests for api-gateway
-      #   run: docker-compose run --rm api-gateway npm test
-
-      # Run tests for ingestion (if applicable)
-      # Uncomment this when tests are ready
-      # - name: Run tests for ingestion
-      #   run: docker-compose run --rm ingestion npm test
 
   deploy:
     runs-on: ubuntu-latest
@@ -81,6 +78,3 @@ jobs:
           docker-compose down
           docker-compose up -d --build
           EOF
-
-
-          
