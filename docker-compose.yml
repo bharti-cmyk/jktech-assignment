@@ -47,10 +47,8 @@ services:
     networks:
       - my_network
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
 
   ingestion:
     build:
@@ -64,10 +62,8 @@ services:
     networks:
       - my_network
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
 
 networks:
   my_network:
