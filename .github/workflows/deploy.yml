@@ -75,7 +75,7 @@ jobs:
       # Deploy to DigitalOcean Droplet
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no root@ubuntu-s-1vcpu-1gb-amd-blr1-01 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@142.93.215.48 << 'EOF'
           cd /jktech-assignment
           git pull origin main
           docker-compose down
