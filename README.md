@@ -1,132 +1,65 @@
-# 🚀 NestJS API Gateway
+🧾 NestJS Microservices – API Gateway & Ingestion
+This project is a production-ready NestJS microservices architecture featuring:
 
-## 📌 Project Overview
-This project is an **API Gateway** built using **NestJS**, designed for handling authentication, role-based access control, document management, and ingestion control. It serves as a central entry point for microservices, managing requests and routing them appropriately.
+🛡 API Gateway for handling authentication, routing, and user access
 
----
+⚙️ Ingestion Service for document ingestion processing
 
-## 🛠️ Tech Stack
-- **Backend Framework:** NestJS (TypeScript)
-- **Database:** PostgreSQL (with TypeORM)
-- **Authentication:** JWT & Passport.js
-- **File Uploads:** Multer-S3
-- **Caching:** Redis
-- **RBAC (Role-Based Access Control):** CASL
-- **Testing:** Jest & Supertest
-- **API Documentation:** Swagger (OpenAPI)
+🗃 PostgreSQL for persistent data
 
----
+⚡ Redis for caching and queue management
 
-## 📂 Project Structure
-```
-api-gateway/
-│── src/
-│   ├── auth/             # Authentication & Authorization
-│   ├── database/         # Database & Redis Config
-│   ├── document/         # Document Management APIs
-│   ├── ingestion/        # Ingestion APIs
-│   ├── global/upload/    # File Upload Configurations
-│   ├── main.ts           # Application Entry Point
-│   ├── app.module.ts     # Main Module
-│
-│── test/
-│   ├── app.e2e-spec.ts   # End-to-End Tests
-│
-│── .env                  # Environment Variables
-│── README.md             # Documentation
-│── package.json          # Project Dependencies
-```
+🚀 Dockerized Production Deployment
 
----
+🔄 CI/CD with GitHub Actions for auto-deployment to a DigitalOcean droplet
 
-## 🚀 Getting Started
-### 1️⃣ Prerequisites
-Ensure you have the following installed:
-- Node.js (v20+ recommended)
-- PostgreSQL
-- Redis
-- AWS S3 (for file uploads)
+📁 Project Structure
+css
+Copy
+Edit
+.
+├── api-gateway/
+│   ├── src/
+│   ├── Dockerfile
+│   └── .env.prod
+├── ingestion/
+│   ├── src/
+│   ├── Dockerfile
+│   └── .env.prod
+├── docker-compose.prod.yml
+├── uploads/
+└── .github/workflows/deploy.yml
+⚙️ Environment Variables
+Create .env.prod files in both api-gateway/ and ingestion/.
 
-### 2️⃣ Installation
-```bash
-git clone 
-cd api-gateway
-npm install
-npm start
+Example .env.prod
+env
+Copy
+Edit
+# JWT
+JWT_SECRET=super_secret_key
 
-cd ingestion
-npm install
-npm start
-```
+# Upload
+UPLOAD_PATH=./uploads
+UPLOAD_MAX_FILE_SIZE=10485760 # 10MB
 
-### 3️⃣ Environment Variables
-Create a `.env` file in the project root and add:
-```env
-JWT_SECRET=jktech
-API_GATEWAY_PORT=3000
-DATABASE_HOST=localhost
+# Database
+DATABASE_HOST=postgres
 DATABASE_PORT=5432
 DATABASE_USER=postgres
 DATABASE_PASSWORD=root
-DATABASE_NAME=Jktech_Asessment
-UPLOAD_PATH=./uploads
-UPLOAD_MAX_FILE_SIZE=10485760 # 10MB
-REDIS_HOST=localhost
+DATABASE_NAME=legacy_service
+
+# Redis
+REDIS_HOST=redis
 REDIS_PORT=6379
-```
+🐳 Docker Compose (Production)
+Use docker-compose.prod.yml to run all services in production:
 
-### 4️⃣ Run the Application
-```bash
-npm run start  # Start the app
-npm run start:dev  # Development mode (watch mode)
-```
-The API Gateway will be running at: `http://localhost:3000`
-
----
-
-## 🔹 API Documentation
-Swagger is enabled for API documentation. You can access it at:
-```
-http://localhost:3000/api-docs#
-```
-
----
-
-## 🧪 Testing
-### 1️⃣ Run Unit Tests
-```bash
-npm run test
-```
-
-## 🚀 Deployment
-### Docker Setup (Optional)
-Create a `Dockerfile`:
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-CMD ["npm", "run", "start"]
-EXPOSE 3000
-```
-Build and run the container:
-```bash
-docker build -t api-gateway .
-docker run -p 3000:3000 api-gateway
-```
-
----
-
-## 🔥 Features
-✅ **JWT Authentication** (Login, Signup, Logout)  
-✅ **Role-Based Access Control (RBAC)** using CASL  
-✅ **Document Management** (CRUD operations)  
-✅ **File Uploads to AWS S3** using Multer  
-✅ **Microservices Integration** (for ingestion control)  
-✅ **API Gateway Pattern Implementation**  
-✅ **Swagger API Documentation**  
-✅ **Redis Caching for Optimized Performance**  
-
-
-
+docker compose -f docker-compose.prod.yml up --build -d
+Ports
+Service	     Port on Host	   Port in Container
+API Gateway	  4001	          3000
+Ingestion	    4002	          3000
+PostgreSQL	  5432	          5432
+Redis	        6379	          6379
