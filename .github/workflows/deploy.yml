@@ -76,7 +76,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no root@142.93.215.48 << 'EOF'
-          cd /jktech-assignment
+          cd jktech-assignment
           git pull origin main
           docker-compose down
           docker-compose up -d --build
