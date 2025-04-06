@@ -49,10 +49,7 @@ services:
     depends_on:
       - postgres
       - redis
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+    
 
   ingestion:
     build:
