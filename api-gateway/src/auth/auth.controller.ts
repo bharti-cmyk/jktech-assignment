@@ -18,8 +18,6 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RolesGuard } from '../users/roles.guard';
-import { CheckPermissions } from '../global/decorators/check-permission.decorator';
-import { Action } from '../users/roles/role-permission.entity';
 import { JwtAuthGuard } from './jwt.guard';
 import { Roles } from '../users/roles.decorator';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -63,7 +61,6 @@ export class AuthController {
   @Post('register')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  //@CheckPermissions((ability) => ability.can(Action.WRITE, 'User'))
   create(@Body() createUserDto: CreateUserDto) {
     return this.authService.create(createUserDto);
   }
@@ -73,7 +70,6 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'List of users' })
   @Get()
   @UseGuards(JwtAuthGuard)
-  //@CheckPermissions((ability) => ability.can(Action.READ, 'User'))
   findAllUser() {
     return this.authService.findAllUser();
   }
@@ -84,7 +80,6 @@ export class AuthController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  //@CheckPermissions((ability) => ability.can(Action.READ, 'User'))
   findOneUser(@Param('id') id: number) {
     const user = this.authService.findOne(id);
     if (!user) {
@@ -99,12 +94,12 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User deleted' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  // @CheckPermissions((ability) => ability.can(Action.WRITE, 'User'))
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async deleteUser(@Param('id') id: number) {
     const userDeleted = await this.authService.remove(id);
-    if(userDeleted.affected === 1) {
-      return "User deleted successfully";
+    if (userDeleted.affected === 1) {
+      return 'User deleted successfully';
     }
   }
 }

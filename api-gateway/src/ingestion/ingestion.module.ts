@@ -16,7 +16,7 @@ import { RedisModule } from '../database/redis/redis.module';
         name: 'INGESTION_SERVICE',
         transport: Transport.REDIS, // Change transport type if necessary
         options: {
-          host: 'localhost',
+          host: process.env.REDIS_HOST || 'localhost', // Use environment variable or default to localhost
           port: 6379, // Make sure this matches your Redis setup (or your microservice configuration)
         },
       },

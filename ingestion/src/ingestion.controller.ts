@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import {  Controller, Get, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { IngestionService } from './ingestion.service';
 import { AddIngestionDTO } from './dto/add-ingestion.dto';

@@ -20,7 +20,9 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { Action } from '../users/roles/role-permission.entity';
 import { CreateIngestionDto } from './dto/create-ingestion.dto';
 import { IngestionService } from './ingestion.service';
-import { CaslModule } from '../casl/casl.module';
+import { Roles } from 'src/users/roles.decorator';
+import { RolesGuard } from 'src/users/roles.guard';
+import { IngestionResponseDto } from './dto/ingestion-response.dto';
 
 interface AuthTokenPayload {
   userId: number;
@@ -37,9 +39,14 @@ interface AuthenticatedRequest extends Request {
 export class IngestionController {
   constructor(private readonly ingestionService: IngestionService) {}
 
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @CheckPermissions((ability) => ability.can(Action.WRITE, 'Ingestion'))
+  /**
+   * Create a new ingestion record
+   * @param createIngestionDto Ingestion data
+   * @param req Authenticated request
+   * @returns Created ingestion record
+   */
+
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create an ingestion record' })
   @ApiResponse({
     status: 201,
@@ -53,10 +60,13 @@ export class IngestionController {
       },
     },
   })
-  create(
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  createIngestion(
     @Body() createIngestionDto: CreateIngestionDto,
     @Request() req: AuthenticatedRequest,
-  ) {
+  ): Promise<IngestionResponseDto> {
     if (!req.user) {
       throw new Error('User not authenticated');
     }
@@ -64,6 +74,13 @@ export class IngestionController {
     return this.ingestionService.addIngestion(createIngestionDto, userId);
   }
 
+  /**
+   * Get ingestion status by ID
+   * @param id Ingestion ID
+   * @returns Ingestion status
+   */
+
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get an ingestion record by ID' })
   @ApiResponse({
     status: 200,

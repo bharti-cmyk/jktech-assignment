@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -21,6 +26,10 @@ export class IngestionService {
    */
   async addIngestion(data: AddIngestionDTO) {
     Logger.log('Received data for ingestion:', data); // Log the data
+
+    if (!data.documentId) {
+      throw new BadRequestException('Document ID is required');
+    }
 
     const newIngestion = new IngestionEntity();
     newIngestion.documentId = data.documentId;
@@ -65,6 +74,12 @@ export class IngestionService {
   }
 
   getIngestion(ingestionId: number) {
-    return this.ingestionRepository.findOne({ where: { id: ingestionId } });
+    const ingestion = this.ingestionRepository.findOne({
+      where: { id: ingestionId },
+    });
+    if (!ingestion) {
+      return null;
+    }
+    return ingestion;
   }
 }

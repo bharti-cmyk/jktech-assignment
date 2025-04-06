@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
@@ -35,16 +40,18 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const payload = { sub: user.id, username: user.email,role: user.roleId };
+    const payload = { sub: user.id, username: user.email, role: user.roleId };
     const access_token = this.jwtService.sign(payload);
     return { message: 'Successfully loggedin', access_token };
   }
 
   async create(createUserDto: CreateUserDto): Promise<RegisterDto> {
-    const existingUser = await this.usersService.findByEmail(createUserDto.email);
+    const existingUser = await this.usersService.findByEmail(
+      createUserDto.email,
+    );
 
     if (existingUser) {
-      throw new ConflictException('User already exists'); 
+      throw new ConflictException('User already exists');
     }
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
@@ -78,7 +85,7 @@ export class AuthService {
   }
 
   async findAllUser(): Promise<UserEntity[]> {
-    const users =  this.usersRepository.find();
+    const users = this.usersRepository.find();
 
     if (!users) {
       return [];
@@ -102,6 +109,6 @@ export class AuthService {
     }
     const userDeleted = await this.usersRepository.delete(id);
 
-    return userDeleted
+    return userDeleted;
   }
 }

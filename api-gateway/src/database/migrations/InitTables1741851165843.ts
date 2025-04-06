@@ -56,8 +56,8 @@ export class InitTables1741851165843 implements MigrationInterface {
         id SERIAL PRIMARY KEY,
         original_name VARCHAR NOT NULL,
         name VARCHAR NOT NULL,
-        mimeType VARCHAR NOT NULL,
-        uploadedAt TIMESTAMP DEFAULT now()
+        mime_type VARCHAR NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT now()
       )
     `);
   }

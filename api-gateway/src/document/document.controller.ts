@@ -63,7 +63,6 @@ export class DocumentController {
       },
     },
   })
-
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'Document uploaded successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -107,7 +106,7 @@ export class DocumentController {
   @ApiResponse({ status: 404, description: 'Document not found' })
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'editor', 'viewer')
   async getDocument(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: AuthenticatedRequest,
@@ -145,6 +144,7 @@ export class DocumentController {
   @ApiResponse({ status: 404, description: 'Document not found' })
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'editor')
   @UseInterceptors(FileInterceptor('file'))
   async updateDocument(
     @Param('id', ParseIntPipe) id: number,
@@ -170,6 +170,7 @@ export class DocumentController {
   @ApiResponse({ status: 200, description: 'Returns a list of documents' })
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'editor', 'viewer')
   async listDocuments(@Request() req: AuthenticatedRequest) {
     if (!req.user) {
       throw new Error('User not authenticated');
@@ -188,6 +189,7 @@ export class DocumentController {
   @ApiResponse({ status: 404, description: 'Document not found' })
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'editor')
   async deleteDocument(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: AuthenticatedRequest,

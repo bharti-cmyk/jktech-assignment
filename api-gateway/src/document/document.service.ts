@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,7 +45,7 @@ export class DocumentService {
       return await this.documentRepository.save(newDocument);
     } catch (error) {
       await rm(file.path);
-      throw error;
+      throw new BadRequestException('Error saving document to the database');
     }
   }
 
@@ -151,7 +152,7 @@ export class DocumentService {
     const documents = await this.documentRepository.find();
     return Promise.all(
       documents.map(async (document) => {
-        const humanSize = await this.getSizeOfDocument(
+        const documentSize = await this.getSizeOfDocument(
           join(
             join(__dirname, this.configService.get('upload.path') as string),
             document.name,
@@ -161,7 +162,7 @@ export class DocumentService {
         return {
           id: document.id,
           name: document.originalName,
-          size: humanSize,
+          size: documentSize,
           uploadedAt: document.uploadedAt,
         };
       }),

@@ -23,9 +23,8 @@ import { JwtAuthGuard } from './auth/jwt.guard';
     SeedModule,
     DocumentModule,
     IngestionModule,
-    CaslModule
+    CaslModule,
   ],
-  providers: [
-  ],
+  providers: [],
 })
 export class AppModule {}
