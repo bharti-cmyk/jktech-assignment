@@ -20,7 +20,7 @@ import { LoginDto } from './dto/login.dto';
 import { RolesGuard } from '../users/roles.guard';
 import { JwtAuthGuard } from './jwt.guard';
 import { Roles } from '../users/roles.decorator';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -80,8 +80,8 @@ export class AuthController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOneUser(@Param('id') id: number) {
-    const user = this.authService.findOne(id);
+  async findOneUser(@Param('id') id: number) {
+    const user = await this.authService.findOne(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -99,7 +99,7 @@ export class AuthController {
   async deleteUser(@Param('id') id: number) {
     const userDeleted = await this.authService.remove(id);
     if (userDeleted.affected === 1) {
-      return 'User deleted successfully';
+      return { message: 'User deleted successfully' };
     }
   }
 }

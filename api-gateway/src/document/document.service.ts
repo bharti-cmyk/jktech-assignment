@@ -50,7 +50,7 @@ export class DocumentService {
   }
 
   async getUserFromRequest(userId: number): Promise<UserEntity> {
-    const user = await this.authService.findOne(userId);
+    const user = await this.authService.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }

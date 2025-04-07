@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
@@ -59,18 +65,14 @@ export class IngestionService {
       );
     } catch (error) {
       console.error(`Error fetching ingestion with ID ${id}:`, error.message);
-      throw new HttpException(
+      throw new NotFoundException(
         `Failed to fetch ingestion with ID ${id}. Please try again later.`,
-        HttpStatus.BAD_GATEWAY,
       );
     }
 
     // Validate the response
     if (!response || !response.ingestion) {
-      throw new HttpException(
-        `Ingestion with ID ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException(`Ingestion with ID ${id} not found`);
     }
 
     const [document, user] = await Promise.all([
@@ -81,16 +83,14 @@ export class IngestionService {
     ]);
 
     if (!document) {
-      throw new HttpException(
+      throw new NotFoundException(
         `Document with ID ${response.ingestion.documentId} not found`,
-        HttpStatus.NOT_FOUND,
       );
     }
 
     if (!user) {
-      throw new HttpException(
+      throw new NotFoundException(
         `User with ID ${response.ingestion.userId} not found`,
-        HttpStatus.NOT_FOUND,
       );
     }
 

@@ -29,5 +29,5 @@ export class UserEntity {
   role: RoleEntity;
 
   @Column({ name: 'password' })
-  passwordHash: string;
+  password: string;
 }

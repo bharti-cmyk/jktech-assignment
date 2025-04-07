@@ -1,73 +1,64 @@
-// import { createMock, DeepMocked } from '@golevelup/ts-jest';
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { IngestionController } from './ingestion.controller';
-// import { IngestionService } from './ingestion.service';
-// import { JwtAuthGuard } from '../auth/jwt.guard';
-// import { RolesGuard } from '../users/roles.guard';
-// import { Reflector } from '@nestjs/core';
-// import { CreateIngestionDto } from './dto/create-ingestion.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { IngestionController } from './ingestion.controller';
+import { IngestionService } from './ingestion.service';
+import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt.guard'; // Import your JwtAuthGuard
+import { CreateIngestionDto } from './dto/create-ingestion.dto';
 
-// describe('IngestionController', () => {
-//   let controller: IngestionController;
-//   let service: DeepMocked<IngestionService>;
+describe('IngestionController', () => {
+  let controller: IngestionController;
+  let service: IngestionService;
 
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [IngestionController],
-//       providers: [
-//         Reflector,
-//         {
-//           provide: IngestionService,
-//           useValue: createMock<IngestionService>(),
-//         },
-//       ],
-//     })
-//       .overrideGuard(JwtAuthGuard)
-//       .useValue(createMock<JwtAuthGuard>())
-//       .overrideGuard(RolesGuard)
-//       .useValue(createMock<RolesGuard>())
-//       .compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [IngestionController],
+      providers: [
+        {
+          provide: IngestionService,
+          useValue: {
+            findIngestionById: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-//     controller = module.get<IngestionController>(IngestionController);
-//     service = module.get(IngestionService);
-//   });
+    controller = module.get<IngestionController>(IngestionController);
+    service = module.get<IngestionService>(IngestionService);
 
-//   it('should be defined', () => {
-//     expect(controller).toBeDefined();
-//   });
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Suppress console.error logs
+  });
 
-//   it('should call create and return ingestion data', async () => {
-//     const createIngestionDto: CreateIngestionDto = {
-//       documentId: 1,
-//     };
-//     const userId = 1;
+  describe('findOne', () => {
+    it('should throw NotFoundException if ingestion record is not found', async () => {
+      const ingestionId = 1;
 
-//     jest.spyOn(service, 'addIngestion').mockResolvedValue({
-//       id: 1,
-//       ...createIngestionDto,
-//     } as any);
+      jest
+        .spyOn(service, 'findIngestionById')
+        .mockRejectedValue(new NotFoundException('Ingestion record not found'));
 
-//     const req = { user: { userId } } as any;
-//     const result = await controller.create(createIngestionDto, req);
+      await expect(controller.findOne(ingestionId)).rejects.toThrow(
+        NotFoundException,
+      );
 
-//     expect(service.addIngestion).toHaveBeenCalledWith(
-//       createIngestionDto,
-//       userId,
-//     );
-//     expect(result).toEqual({ id: 1, ...createIngestionDto });
-//   });
+      await expect(controller.findOne(ingestionId)).rejects.toThrow(
+        'Ingestion record not found',
+      );
+    });
 
-//   it('should call findOne and return ingestion data', async () => {
-//     const ingestionId = 1;
-//     const ingestionData = { id: ingestionId, name: 'Test Ingestion' };
+    it('should throw ForbiddenException if user lacks permissions', async () => {
+      const ingestionId = 1;
 
-//     jest
-//       .spyOn(service, 'findIngestionById')
-//       .mockResolvedValue(ingestionData as any);
+      jest
+        .spyOn(service, 'findIngestionById')
+        .mockRejectedValue(new ForbiddenException('Forbidden'));
 
-//     const result = await controller.findOne(ingestionId);
+      await expect(controller.findOne(ingestionId)).rejects.toThrow(
+        ForbiddenException,
+      );
 
-//     expect(service.findIngestionById).toHaveBeenCalledWith(ingestionId);
-//     expect(result).toEqual(ingestionData);
-//   });
-// });
+      await expect(controller.findOne(ingestionId)).rejects.toThrow(
+        'Forbidden',
+      );
+    });
+  });
+});

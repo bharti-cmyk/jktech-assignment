@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoleEntity } from '../users/roles/roles.entity';
 import { RegisterDto } from './dto/register.dto';
+import { UserData } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
 
   private async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
-    if (user && (await bcrypt.compare(password, user.passwordHash))) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       return user;
     }
     throw new UnauthorizedException('Invalid credentials');
@@ -68,7 +69,7 @@ export class AuthService {
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: createUserDto.email,
-      passwordHash: hashedPassword,
+      password: hashedPassword,
       roleId: role.id,
     });
 
@@ -84,20 +85,51 @@ export class AuthService {
     };
   }
 
-  async findAllUser(): Promise<UserEntity[]> {
-    const users = this.usersRepository.find();
+  async findAllUser(): Promise<UserData[]> {
+    const users = await this.usersRepository.find();
 
-    if (!users) {
+    if (!users || users.length === 0) {
       return [];
     }
 
-    return users;
+    const userDetails = users.map((user) => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      roleId: user.roleId,
+    }));
+
+    return userDetails;
   }
 
-  async findOne(id: number): Promise<UserEntity | null> {
-    return this.usersRepository.findOne({ where: { id } });
+  async findOne(id: number): Promise<UserData | null> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return null;
+    }
+
+    const userDetails: UserData = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      roleId: user.roleId,
+    };
+
+    return userDetails;
   }
 
+  async findById(id: number): Promise<UserEntity | null> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
   async findByEmail(email: string): Promise<UserEntity | null> {
     return this.usersRepository.findOne({ where: { email } });
   }
@@ -109,6 +141,6 @@ export class AuthService {
     }
     const userDeleted = await this.usersRepository.delete(id);
 
-    return userDeleted;
+    return { affected: userDeleted.affected };
   }
 }

@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   Request,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,8 +21,8 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { Action } from '../users/roles/role-permission.entity';
 import { CreateIngestionDto } from './dto/create-ingestion.dto';
 import { IngestionService } from './ingestion.service';
-import { Roles } from 'src/users/roles.decorator';
-import { RolesGuard } from 'src/users/roles.guard';
+import { Roles } from '../users/roles.decorator';
+import { RolesGuard } from '../users/roles.guard';
 import { IngestionResponseDto } from './dto/ingestion-response.dto';
 
 interface AuthTokenPayload {
@@ -67,8 +68,9 @@ export class IngestionController {
     @Body() createIngestionDto: CreateIngestionDto,
     @Request() req: AuthenticatedRequest,
   ): Promise<IngestionResponseDto> {
+    console.log('Request user:', req.user);
     if (!req.user) {
-      throw new Error('User not authenticated');
+      throw new NotFoundException('User not authenticated');
     }
     const { userId } = req.user;
     return this.ingestionService.addIngestion(createIngestionDto, userId);
@@ -91,6 +93,7 @@ export class IngestionController {
   @UseGuards(JwtAuthGuard)
   @CheckPermissions((ability) => ability.can(Action.READ, 'Ingestion'))
   findOne(@Param('id', ParseIntPipe) id: number) {
+    console.log('Fetching ingestion record with ID:', id);
     return this.ingestionService.findIngestionById(id);
   }
 }
