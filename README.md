@@ -14,9 +14,6 @@ This project is a production-ready NestJS microservices architecture featuring:
 🔄 CI/CD with GitHub Actions for auto-deployment to a DigitalOcean droplet
 
 📁 Project Structure
-css
-Copy
-Edit
 .
 ├── api-gateway/
 │   ├── src/
@@ -32,10 +29,7 @@ Edit
 ⚙️ Environment Variables
 Create .env.prod files in both api-gateway/ and ingestion/.
 
-Example .env.prod
-env
-Copy
-Edit
+Example .env
 # JWT
 JWT_SECRET=super_secret_key
 
@@ -48,15 +42,29 @@ DATABASE_HOST=postgres
 DATABASE_PORT=5432
 DATABASE_USER=postgres
 DATABASE_PASSWORD=root
-DATABASE_NAME=legacy_service
+DATABASE_NAME=jktech_service
 
 # Redis
 REDIS_HOST=redis
 REDIS_PORT=6379
-🐳 Docker Compose (Production)
-Use docker-compose.prod.yml to run all services in production:
+🐳 Docker Compose
 
-docker compose -f docker-compose.prod.yml up --build -d
+Run npm install for api-gateway and ingestion
+
+Use docker-compose.yml to run all services:
+
+docker compose -f docker-compose.yml up --build -d
+
+After running this all nservice will be up.
+Redis
+Postgres
+Api-gateway
+ingestion
+
+Then you can access all api using swagger url
+http://localhost:4001/api-docs#/
+
+
 
 Service      | Port on Host | Port in Container
 -------------|--------------|-------------------
